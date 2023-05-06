@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.AsqBooksMapper">
+
+    <resultMap type="AsqBooks" id="AsqBooksResult">
+        <result property="bookId" column="book_id"/>
+        <result property="bookWriterName" column="book_writer_name"/>
+        <result property="bookName" column="book_name"/>
+        <result property="bookType" column="book_type"/>
+        <result property="bookPubDate" column="book_pub_date"/>
+        <result property="bookUpDate" column="book_up_date"/>
+        <result property="bookPress" column="book_press"/>
+        <result property="bookCover" column="book_cover"/>
+        <result property="bookPdfUrl" column="book_pdf_url"/>
+        <result property="bookAudit" column="book_audit"/>
+    </resultMap>
+
+    <resultMap type="AsqBooksRank" id="AsqBooksRankResult">
+        <result property="bookId" column="book_id"/>
+        <result property="bookWriterName" column="book_writer_name"/>
+        <result property="bookName" column="book_name"/>
+        <result property="bookType" column="book_type"/>
+        <result property="bookPubDate" column="book_pub_date"/>
+        <result property="bookUpDate" column="book_up_date"/>
+        <result property="bookPress" column="book_press"/>
+        <result property="bookCover" column="book_cover"/>
+        <result property="bookPdfUrl" column="book_pdf_url"/>
+        <result property="bookAudit" column="book_audit"/>
+        <result property="readNum" column="read_num"/>
+    </resultMap>
+
+    <sql id="selectAsqBooksVo">
+        select book_id,
+               book_writer_name,
+               book_name,
+               book_type,
+               book_pub_date,
+               book_up_date,
+               book_press,
+               book_cover,
+               book_pdf_url,
+               book_audit
+        from asq_books
+    </sql>
+
+    <select id="selectAsqBooksList" parameterType="AsqBooks" resultMap="AsqBooksResult">
+        <include refid="selectAsqBooksVo"/>
+        <where>
+            <if test="bookWriterName != null  and bookWriterName != ''">and book_writer_name like concat('%',
+                #{bookWriterName}, '%')
+            </if>
+            <if test="bookName != null  and bookName != ''">and book_name like concat('%', #{bookName}, '%')</if>
+            <if test="bookType != null  and bookType != ''">and book_type = #{bookType}</if>
+            <if test="bookAudit != null">and book_audit = #{bookAudit}</if>
+            <if test="params.beginBookPubDate != null and params.beginBookPubDate != '' and params.endBookPubDate != null and params.endBookPubDate != ''">
+                and book_pub_date between #{params.beginBookPubDate} and #{params.endBookPubDate}
+            </if>
+            <if test="params.beginBookUpDate != null and params.beginBookUpDate != '' and params.endBookUpDate != null and params.endBookUpDate != ''">
+                and book_up_date between #{params.beginBookUpDate} and #{params.endBookUpDate}
+            </if>
+            <if test="bookPress != null  and bookPress != ''">and book_press like concat('%', #{bookPress}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectAsqBooksByBookId" parameterType="Long" resultMap="AsqBooksResult">
+        <include refid="selectAsqBooksVo"/>
+        where book_id = #{bookId}
+    </select>
+
+
+    <select id="readAllRank" resultType="com.ruoyi.domain.AsqBooksRank" resultMap="AsqBooksRankResult">
+        SELECT b.*, r.read_num
+        FROM asq_books b
+                 LEFT JOIN asq_rank_parm r
+                           ON b.book_id = r.book_id
+        ORDER BY r.read_num DESC
+        limit 6
+    </select>
+
+    <insert id="insertAsqBooks" parameterType="AsqBooks" useGeneratedKeys="true" keyProperty="bookId">
+        insert into asq_books
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookWriterName != null">book_writer_name,</if>
+            <if test="bookName != null">book_name,</if>
+            <if test="bookType != null">book_type,</if>
+            <if test="bookPubDate != null">book_pub_date,</if>
+            <if test="bookUpDate != null">book_up_date,</if>
+            <if test="bookPress != null">book_press,</if>
+            <if test="bookCover != null">book_cover,</if>
+            <if test="bookPdfUrl != null">book_pdf_url,</if>
+            <if test="bookAudit != null">book_audit,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bookWriterName != null">#{bookWriterName},</if>
+            <if test="bookName != null">#{bookName},</if>
+            <if test="bookType != null">#{bookType},</if>
+            <if test="bookPubDate != null">#{bookPubDate},</if>
+            <if test="bookUpDate != null">#{bookUpDate},</if>
+            <if test="bookPress != null">#{bookPress},</if>
+            <if test="bookCover != null">#{bookCover},</if>
+            <if test="bookPdfUrl != null">#{bookPdfUrl},</if>
+            <if test="bookAudit != null">#{bookAudit},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAsqBooks" parameterType="AsqBooks">
+        update asq_books
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bookWriterName != null">book_writer_name = #{bookWriterName},</if>
+            <if test="bookName != null">book_name = #{bookName},</if>
+            <if test="bookType != null">book_type = #{bookType},</if>
+            <if test="bookPubDate != null">book_pub_date = #{bookPubDate},</if>
+            <if test="bookUpDate != null">book_up_date = #{bookUpDate},</if>
+            <if test="bookPress != null">book_press = #{bookPress},</if>
+            <if test="bookCover != null">book_cover = #{bookCover},</if>
+            <if test="bookPdfUrl != null">book_pdf_url = #{bookPdfUrl},</if>
+            <if test="bookAudit != null">book_audit = #{bookAudit},</if>
+        </trim>
+        where book_id = #{bookId}
+    </update>
+
+    <delete id="deleteAsqBooksByBookId" parameterType="Long">
+        delete
+        from asq_books
+        where book_id = #{bookId}
+    </delete>
+
+    <delete id="deleteAsqBooksByBookIds" parameterType="String">
+        delete from asq_books where book_id in
+        <foreach item="bookId" collection="array" open="(" separator="," close=")">
+            #{bookId}
+        </foreach>
+    </delete>
+</mapper>

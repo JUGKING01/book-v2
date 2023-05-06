@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.AsqPptMapper">
+
+    <resultMap type="AsqPpt" id="AsqPptResult">
+        <result property="pptId"    column="ppt_id"    />
+        <result property="pptName"    column="ppt_name"    />
+        <result property="pptPic"    column="ppt_pic"    />
+        <result property="pptUrl"    column="ppt_url"    />
+        <result property="pptDesc"    column="ppt_desc"    />
+        <result property="pptType"    column="ppt_type"    />
+    </resultMap>
+
+    <sql id="selectAsqPptVo">
+        select ppt_id, ppt_name, ppt_pic, ppt_url, ppt_desc, ppt_type from asq_ppt
+    </sql>
+
+    <select id="selectAsqPptList" parameterType="AsqPpt" resultMap="AsqPptResult">
+        <include refid="selectAsqPptVo"/>
+        <where>
+            <if test="pptName != null  and pptName != ''"> and ppt_name like concat('%', #{pptName}, '%')</if>
+            <if test="pptType != null "> and ppt_type = #{pptType}</if>
+        </where>
+        <if test="pptDesc != null ">order by ppt_desc desc</if>
+    </select>
+
+    <select id="selectAsqPptByPptId" parameterType="Long" resultMap="AsqPptResult">
+        <include refid="selectAsqPptVo"/>
+        where ppt_id = #{pptId}
+    </select>
+
+    <insert id="insertAsqPpt" parameterType="AsqPpt" useGeneratedKeys="true" keyProperty="pptId">
+        insert into asq_ppt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pptName != null">ppt_name,</if>
+            <if test="pptPic != null">ppt_pic,</if>
+            <if test="pptUrl != null">ppt_url,</if>
+            <if test="pptDesc != null">ppt_desc,</if>
+            <if test="pptType != null">ppt_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pptName != null">#{pptName},</if>
+            <if test="pptPic != null">#{pptPic},</if>
+            <if test="pptUrl != null">#{pptUrl},</if>
+            <if test="pptDesc != null">#{pptDesc},</if>
+            <if test="pptType != null">#{pptType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAsqPpt" parameterType="AsqPpt">
+        update asq_ppt
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pptName != null">ppt_name = #{pptName},</if>
+            <if test="pptPic != null">ppt_pic = #{pptPic},</if>
+            <if test="pptUrl != null">ppt_url = #{pptUrl},</if>
+            <if test="pptDesc != null">ppt_desc = #{pptDesc},</if>
+            <if test="pptType != null">ppt_type = #{pptType},</if>
+        </trim>
+        where ppt_id = #{pptId}
+    </update>
+
+    <delete id="deleteAsqPptByPptId" parameterType="Long">
+        delete from asq_ppt where ppt_id = #{pptId}
+    </delete>
+
+    <delete id="deleteAsqPptByPptIds" parameterType="String">
+        delete from asq_ppt where ppt_id in
+        <foreach item="pptId" collection="array" open="(" separator="," close=")">
+            #{pptId}
+        </foreach>
+    </delete>
+</mapper>

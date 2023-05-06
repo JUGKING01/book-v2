@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.AsqRankParmMapper">
+    
+    <resultMap type="AsqRankParm" id="AsqRankParmResult">
+        <result property="rankParmId"    column="rank_parm_id"    />
+        <result property="bookId"    column="book_id"    />
+        <result property="readNum"    column="read_num"    />
+        <result property="applaudNum"    column="applaud_num"    />
+        <result property="commentNum"    column="comment_num"    />
+        <result property="collectNum"    column="collect_num"    />
+    </resultMap>
+
+    <sql id="selectAsqRankParmVo">
+        select rank_parm_id, book_id, read_num, applaud_num, comment_num, collect_num from asq_rank_parm
+    </sql>
+
+    <select id="selectAsqRankParmList" parameterType="AsqRankParm" resultMap="AsqRankParmResult">
+        <include refid="selectAsqRankParmVo"/>
+        <where>  
+            <if test="bookId != null "> and book_id = #{bookId}</if>
+            <if test="readNum != null "> and read_num = #{readNum}</if>
+            <if test="applaudNum != null "> and applaud_num = #{applaudNum}</if>
+            <if test="commentNum != null "> and comment_num = #{commentNum}</if>
+            <if test="collectNum != null "> and collect_num = #{collectNum}</if>
+        </where>
+    </select>
+    
+    <select id="selectAsqRankParmByRankParmId" parameterType="Long" resultMap="AsqRankParmResult">
+        <include refid="selectAsqRankParmVo"/>
+        where rank_parm_id = #{rankParmId}
+    </select>
+        
+    <insert id="insertAsqRankParm" parameterType="AsqRankParm" useGeneratedKeys="true" keyProperty="rankParmId">
+        insert into asq_rank_parm
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">book_id,</if>
+            <if test="readNum != null">read_num,</if>
+            <if test="applaudNum != null">applaud_num,</if>
+            <if test="commentNum != null">comment_num,</if>
+            <if test="collectNum != null">collect_num,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">#{bookId},</if>
+            <if test="readNum != null">#{readNum},</if>
+            <if test="applaudNum != null">#{applaudNum},</if>
+            <if test="commentNum != null">#{commentNum},</if>
+            <if test="collectNum != null">#{collectNum},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAsqRankParm" parameterType="AsqRankParm">
+        update asq_rank_parm
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bookId != null">book_id = #{bookId},</if>
+            <if test="readNum != null">read_num = #{readNum},</if>
+            <if test="applaudNum != null">applaud_num = #{applaudNum},</if>
+            <if test="commentNum != null">comment_num = #{commentNum},</if>
+            <if test="collectNum != null">collect_num = #{collectNum},</if>
+        </trim>
+        where rank_parm_id = #{rankParmId}
+    </update>
+
+    <delete id="deleteAsqRankParmByRankParmId" parameterType="Long">
+        delete from asq_rank_parm where rank_parm_id = #{rankParmId}
+    </delete>
+
+    <delete id="deleteAsqRankParmByRankParmIds" parameterType="String">
+        delete from asq_rank_parm where rank_parm_id in 
+        <foreach item="rankParmId" collection="array" open="(" separator="," close=")">
+            #{rankParmId}
+        </foreach>
+    </delete>
+</mapper>

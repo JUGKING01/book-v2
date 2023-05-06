@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.AsqWriterMapper">
+    
+    <resultMap type="AsqWriter" id="AsqWriterResult">
+        <result property="writerId"    column="writer_id"    />
+        <result property="writerName"    column="writer_name"    />
+        <result property="writerInfo"    column="writer_info"    />
+        <result property="writerIntro"    column="writer_intro"    />
+        <result property="writerPic"    column="writer_pic"    />
+    </resultMap>
+
+    <sql id="selectAsqWriterVo">
+        select writer_id, writer_name, writer_info, writer_intro, writer_pic from asq_writer
+    </sql>
+
+    <select id="selectAsqWriterList" parameterType="AsqWriter" resultMap="AsqWriterResult">
+        <include refid="selectAsqWriterVo"/>
+        <where>  
+            <if test="writerName != null  and writerName != ''"> and writer_name like concat('%', #{writerName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectAsqWriterByWriterId" parameterType="Long" resultMap="AsqWriterResult">
+        <include refid="selectAsqWriterVo"/>
+        where writer_id = #{writerId}
+    </select>
+        
+    <insert id="insertAsqWriter" parameterType="AsqWriter" useGeneratedKeys="true" keyProperty="writerId">
+        insert into asq_writer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="writerName != null">writer_name,</if>
+            <if test="writerInfo != null">writer_info,</if>
+            <if test="writerIntro != null">writer_intro,</if>
+            <if test="writerPic != null">writer_pic,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="writerName != null">#{writerName},</if>
+            <if test="writerInfo != null">#{writerInfo},</if>
+            <if test="writerIntro != null">#{writerIntro},</if>
+            <if test="writerPic != null">#{writerPic},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAsqWriter" parameterType="AsqWriter">
+        update asq_writer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="writerName != null">writer_name = #{writerName},</if>
+            <if test="writerInfo != null">writer_info = #{writerInfo},</if>
+            <if test="writerIntro != null">writer_intro = #{writerIntro},</if>
+            <if test="writerPic != null">writer_pic = #{writerPic},</if>
+        </trim>
+        where writer_id = #{writerId}
+    </update>
+
+    <delete id="deleteAsqWriterByWriterId" parameterType="Long">
+        delete from asq_writer where writer_id = #{writerId}
+    </delete>
+
+    <delete id="deleteAsqWriterByWriterIds" parameterType="String">
+        delete from asq_writer where writer_id in 
+        <foreach item="writerId" collection="array" open="(" separator="," close=")">
+            #{writerId}
+        </foreach>
+    </delete>
+</mapper>
